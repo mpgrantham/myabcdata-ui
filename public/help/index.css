@@ -1,0 +1,35 @@
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+
+.header {
+    height: 70px;
+    line-height: 70px;;
+    vertical-align: middle;
+    background-color: #1976d2;
+    padding-left: 24px;
+    font-size: 20px;
+}
+
+  
+.title-text {
+	font-family: Verdana;
+	color: white;
+    float: left;
+    font-size: 1.2em;
+}
+
+.title-image {
+	float: left;
+	height: 70px;
+	width: 65px;
+	background-image: url("ABC_64px.png"); 
+	background-repeat: no-repeat;
+	background-position: 0px 5px;
+}
