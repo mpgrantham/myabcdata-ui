@@ -2,22 +2,18 @@ import React, {useState, useEffect} from 'react';
 import { useDispatch } from 'react-redux';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 
-import Alert from '@mui/material/Alert';
-import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
+import { Alert, Button, 
+    Card, CardActions, CardContent, 
+    Checkbox, Container, FormControlLabel, Grid, 
+    TextField, Typography 
+} from '@mui/material';
 
 import UserService from '../../services/UserService';
 import { setSession } from '../../actions/userActions';
 import { setDisabledObserved } from '../../actions/observedActions';
 import { useFormFields  } from '../../hooks/useFormFields';
 
-import { SESSION_TOKEN } from '../../utils/constants';
+import { COOKIE_SIGNED_IN_KEY, SESSION_TOKEN } from '../../utils/constants';
 
 function SignIn({showLoading}) {
 
@@ -28,6 +24,7 @@ function SignIn({showLoading}) {
     const [displayForgotSection, setDisplayForgotSection] = useState(false);
     const [forgotType, setForgotType] = useState('');
     const [forgotEmail, setForgotEmail] = useState('');
+    const [staySignedIn, setStaySignedIn] = useState(false);
 
     const [forgotMessage, setForgotMessage] = useState('');
 
@@ -66,7 +63,7 @@ function SignIn({showLoading}) {
             return;
         }
         
-        UserService.signIn(fields.username, fields.password).then(result => {
+        UserService.signIn(fields.username, fields.password, staySignedIn).then(result => {
 
             if ( result.status === 'SUCCESS' ) {
                 dispatch(setSession(result));
@@ -78,7 +75,21 @@ function SignIn({showLoading}) {
                 let sessionToken = result.sessionKey + ':' + (new Date().getTime() + expireMillis);
 
                 sessionStorage.setItem(SESSION_TOKEN, sessionToken);
-                   
+
+                if ( result.staySignedInKey ) {
+                    const expires = new Date(Date.now() + 60 * 864e5).toUTCString();
+                    document.cookie =
+                        COOKIE_SIGNED_IN_KEY +
+                        "=" +
+                        encodeURIComponent(result.staySignedInKey) +
+                        "; expires=" +
+                        expires +
+                        "; sameSite=Lax; path=/";
+                }
+                else {
+                    document.cookie = COOKIE_SIGNED_IN_KEY + "=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+                }               
+
                 // If signin forced from expiration, redirect to page user was attempting to navigate to
                 if ( state?.from ) {
                     history.push(state?.from.pathname);
@@ -106,6 +117,10 @@ function SignIn({showLoading}) {
             setAlertSeverity(result.severity);
             showLoading(false);
         });
+    }
+
+    const handleStaySignedInChange = (event) => {
+        setStaySignedIn(event.target.checked);
     }
     
     return (
@@ -153,6 +168,20 @@ function SignIn({showLoading}) {
                                 label="Password" 
                                 type="password" 
                                 onChange={setFormField}
+                            />
+                        </Grid>
+
+                        <Grid item>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={staySignedIn}
+                                        onChange={handleStaySignedInChange}
+                                        name="staySignedIn"
+                                        color="primary"
+                                    />
+                                }
+                                label="Stay signed in"
                             />
                         </Grid>
 

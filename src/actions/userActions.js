@@ -1,4 +1,8 @@
+import UserService from '../services/UserService';
+import { setDisabledObserved } from './observedActions';
 import { SET_SESSION_KEY, SET_SETTINGS, SET_USER_NAME } from '../reducers/userReducer';
+
+import { SESSION_TOKEN, COOKIE_SIGNED_IN_KEY } from '../utils/constants';
 
 export const setSession = (userSession) => {
 
@@ -25,4 +29,44 @@ export const setUsername = (username) => {
         type: SET_USER_NAME,
         user: username
     }
+}
+
+export const checkStaySignedIn = (state, dispatch, history) => {
+
+    const sessionKey = state.userReducer.sessionKey;
+
+    console.log("XXXX sessionKey [" + sessionKey + "]");
+
+    if ( sessionKey !== '' ) {
+        return;
+    }
+
+    const signedInKey = document.cookie.split("; ").reduce((r, v) => {
+        const parts = v.split("=");
+        return parts[0] === COOKIE_SIGNED_IN_KEY ? decodeURIComponent(parts[1]) : r;
+    }, "");
+
+    if ( signedInKey && signedInKey.trim() !== '' ) {
+
+        UserService.checkStaySignedIn(signedInKey).then(result => {
+
+            console.log("XXXX result", result);
+                
+            if ( result.id > 0 ) {
+                dispatch(setSession(result));
+                dispatch(setDisabledObserved(false));
+        
+                const expireMillis = Number(process.env.REACT_APP_EXPIRE_MILLIS);
+                        
+                // Use the browser's time so it is not affected by time zone
+                let sessionToken = result.sessionKey + ':' + (new Date().getTime() + expireMillis);
+        
+                sessionStorage.setItem(SESSION_TOKEN, sessionToken);
+        
+                history.push(result.startPage === 'ENTRY' ? "/entry" : "/dashboard");
+            }
+            
+        });
+    }
+           
 }

@@ -17,10 +17,10 @@ import ObservedIcon from '@mui/icons-material/Person';
 import SettingsIcon from '@mui/icons-material/Settings';
 
 import UserService from '../../services/UserService';
-import { setSession } from '../../actions/userActions';
+import { checkStaySignedIn, setSession } from '../../actions/userActions';
 import { getObserved, getObservedList, setDisabledObserved, setObserved, setObservedList } from '../../actions/observedActions';
 
-import { SESSION_TOKEN } from '../../utils/constants';
+import { SESSION_TOKEN, COOKIE_SIGNED_IN_KEY } from '../../utils/constants';
 
 const Header = () => {
 
@@ -35,6 +35,10 @@ const Header = () => {
     const observedList = globalState.observedReducer.observedList;
 
     const userSignedIn = sessionKey !== '';
+    
+    if ( ! userSignedIn ) {
+        checkStaySignedIn(globalState, dispatch, history);
+    }
 
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [selectedIndex, setSelectedIndex] = React.useState(0);
@@ -45,7 +49,6 @@ const Header = () => {
         if ( userSignedIn ) {
             getObservedList(dispatch, sessionKey);
         }
-       
     }, [userSignedIn, sessionKey, dispatch]);
    
     const handleTitleClick = () => {
@@ -53,6 +56,8 @@ const Header = () => {
     }
 
     const handleSignOutClick = () => {
+
+        document.cookie = COOKIE_SIGNED_IN_KEY + "=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
 
         UserService.signOut(sessionKey).then(result => {
 

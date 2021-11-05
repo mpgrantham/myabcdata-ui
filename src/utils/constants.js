@@ -1,5 +1,6 @@
 export const DATA_STORE = 'myabcdata-store';
 export const SESSION_TOKEN = 'MYABCDATA_SESSION_TOKEN';
+export const COOKIE_SIGNED_IN_KEY = 'myabcdata-signed-in-key';
 
 export const STATUS_ERROR = 'error';
 export const STATUS_INFO = 'info';

@@ -1,5 +1,5 @@
 import React, {Suspense, useState} from 'react';
-import {Switch, Route} from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 import Box from '@mui/material/Box';
 
 import Header from './content/Header/Header';
@@ -22,7 +22,7 @@ const Settings = React.lazy(() => import('./content/Settings/Settings'));
 function App() {
 
   const [loading, setLoading] = useState(false);
-
+  
   return (
     
     <div className="root">

@@ -2,6 +2,32 @@ import axios from 'axios';
 
 const MY_ABC_API_URL = process.env.REACT_APP_API_BASE_URL;
 
+const INITIAL_RESPONSE = {
+    status: '',
+    message: '',
+    id: 0,
+    username: '',
+    sessionKey: '',
+    email: '',
+    startPage: '',
+    staySignedInKey: null
+};
+
+const setResponse = (response) => {
+    
+    return {
+        status: 'SUCCESS',
+        message: '',
+        id: response.data.id,
+        username: response.data.userNm,
+        sessionKey: response.data.sessionKey,
+        email: response.data.email,
+        startPage: response.data.startPage,
+        staySignedInKey: response.data.staySignedInKey
+    }
+}
+
+
 const UserService = {
 
     async register(data) {
@@ -70,34 +96,42 @@ const UserService = {
         return resultObj;
     },
 
+    async checkStaySignedIn(signedInKey) {
 
-    async signIn(username, password) {
+        let resultObj = INITIAL_RESPONSE;
+       
+        const data = {
+            key: signedInKey
+        }
+                
+        const url = MY_ABC_API_URL + 'user/keySignIn';
+
+        await axios.post(url, data)
+            .then(response => {
+                resultObj = setResponse(response);
+            })
+            .catch (error => {
+                console.log()
+        });
+        
+        return resultObj;
+    },
+
+    async signIn(username, password, staySignedIn) {
 
         const url = MY_ABC_API_URL + 'user/signIn';
 
         const data = {
             username: username,
-            password: password
+            password: password,
+            staySignedIn: staySignedIn
         }
 
-        let resultObj = {
-            status: '',
-            message: '',
-            id: 0,
-            username: '',
-            sessionKey: '',
-            email: '',
-            startPage: ''
-        }
+        let resultObj = INITIAL_RESPONSE;
 
         await axios.post(url, data)
             .then(response => {
-                resultObj.status = 'SUCCESS';
-                resultObj.id = response.data.id;
-                resultObj.username = response.data.userNm;
-                resultObj.email = response.data.email;
-                resultObj.sessionKey = response.data.sessionKey;
-                resultObj.startPage = response.data.startPage;
+                resultObj = setResponse(response);
             })
             .catch (error => {
                 resultObj.status = 'ERROR';
