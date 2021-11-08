@@ -35,8 +35,6 @@ export const checkStaySignedIn = (state, dispatch, history) => {
 
     const sessionKey = state.userReducer.sessionKey;
 
-    console.log("XXXX sessionKey [" + sessionKey + "]");
-
     if ( sessionKey !== '' ) {
         return;
     }
@@ -50,8 +48,6 @@ export const checkStaySignedIn = (state, dispatch, history) => {
 
         UserService.checkStaySignedIn(signedInKey).then(result => {
 
-            console.log("XXXX result", result);
-                
             if ( result.id > 0 ) {
                 dispatch(setSession(result));
                 dispatch(setDisabledObserved(false));
