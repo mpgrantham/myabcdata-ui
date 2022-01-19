@@ -190,8 +190,8 @@ function SignIn({showLoading}) {
                                 variant="contained" 
                                 color="primary" 
                                 fullWidth={true} 
-                                onClick={signIn}
                                 disabled={submitDisabled}
+                                onClick={signIn}
                             >
                                 Sign In
                             </Button>

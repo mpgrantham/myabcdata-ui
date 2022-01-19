@@ -6,7 +6,7 @@ const IncidentService = {
  
     async getIntensities() {
 
-        const url = MY_ABC_API_URL + 'incident/intensities';
+        const url = MY_ABC_API_URL + 'intensities';
 
         let resultObj = [];
 
@@ -27,7 +27,7 @@ const IncidentService = {
             headers: {'Authorization': sessionKey}
         }
 
-        const url = MY_ABC_API_URL + 'incident/incident';
+        const url = MY_ABC_API_URL + 'incident';
 
         let resultObj = {};
 
@@ -64,7 +64,7 @@ const IncidentService = {
             headers: {'Authorization': sessionKey}
         }
 
-        const url = MY_ABC_API_URL + '/incident/observed/' + observedId +  '/incident/' + incidentId;
+        const url = MY_ABC_API_URL + '/incident/' + incidentId + '/observed/' + observedId;
 
         let resultObj = {};
 
